@@ -1,11 +1,19 @@
 import { Router } from "express";
 import { getAuth } from "@clerk/express";
-import { db, questionnairesTable, teasersTable, usersTable } from "@workspace/db";
+import { db, questionnairesTable, teasersTable } from "@workspace/db";
 import { eq } from "drizzle-orm";
+import OpenAI from "openai";
 
-const ZODIAC_SIGNS = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"];
-const ELEMENTS = ["Fire", "Earth", "Air", "Water"];
-const ASCENDANTS = ["Aries Rising", "Taurus Rising", "Gemini Rising", "Cancer Rising", "Leo Rising", "Virgo Rising", "Libra Rising", "Scorpio Rising", "Sagittarius Rising", "Capricorn Rising", "Aquarius Rising", "Pisces Rising"];
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+const ZODIAC_SIGNS = ["Aries","Taurus","Gemini","Cancer","Leo","Virgo","Libra","Scorpio","Sagittarius","Capricorn","Aquarius","Pisces"];
+const ASCENDANTS = ZODIAC_SIGNS.map(s => `${s} Rising`);
+const ELEMENT_MAP: Record<string, string> = {
+  Aries: "Fire", Leo: "Fire", Sagittarius: "Fire",
+  Taurus: "Earth", Virgo: "Earth", Capricorn: "Earth",
+  Gemini: "Air", Libra: "Air", Aquarius: "Air",
+  Cancer: "Water", Scorpio: "Water", Pisces: "Water",
+};
 
 function getZodiacSign(birthDate: string): string {
   const date = new Date(birthDate);
@@ -25,31 +33,55 @@ function getZodiacSign(birthDate: string): string {
   return "Pisces";
 }
 
-function generateTeaser(userId: string, q: typeof questionnairesTable.$inferSelect) {
+async function generateAITeaser(userId: string, q: typeof questionnairesTable.$inferSelect) {
   const sunSign = q.birthDate ? getZodiacSign(q.birthDate) : ZODIAC_SIGNS[Math.floor(Math.random() * 12)];
   const moonSign = ZODIAC_SIGNS[Math.floor(Math.random() * 12)];
   const ascendant = ASCENDANTS[Math.floor(Math.random() * 12)];
-  const element = ELEMENTS[["Fire","Fire","Air","Water","Fire","Earth","Air","Water","Fire","Earth","Air","Water"].indexOf(sunSign) % 4];
+  const element = ELEMENT_MAP[sunSign] ?? "Fire";
   const luckyNumber = Math.floor(Math.random() * 9) + 1;
 
-  const teaserTexts: Record<string, string> = {
-    Aries: "Your chart reveals a pioneering spirit burning bright. The cosmos have aligned a rare opportunity on your horizon — one that calls for the courage only you possess.",
-    Taurus: "The stars speak of deep roots and hidden abundance. Your patient nature is about to bear its most beautiful fruit yet.",
-    Gemini: "Your mind is a constellation of ideas. A twin path reveals itself — the question is which door you choose to walk through.",
-    Cancer: "The moon whispers of emotional transformation. Something you have quietly nurtured is ready to bloom into its full power.",
-    Leo: "Your solar radiance is amplified now. The universe is staging a grand entrance — and you, dear Leo, are the main act.",
-    Virgo: "Precision and intuition are converging in your chart. The details you have carefully tended are forming a magnificent whole.",
-    Libra: "Balance is your gift and your journey. Venus reveals a relationship — with another or yourself — poised for beautiful evolution.",
-    Scorpio: "Beneath the surface, profound alchemy is occurring. What you are transforming now will define your next seven years.",
-    Sagittarius: "The archer's arrow is drawn and aligned with your truest desire. Adventure calls from an unexpected quarter of your life.",
-    Capricorn: "Your mountains are beginning to speak. A long-worked ambition stands closer to summit than you dare believe.",
-    Aquarius: "The future runs through you like a current. You are ahead of your time in more ways than the world has yet noticed.",
-    Pisces: "Your dreams are not fantasies — they are blueprints. The veil between vision and reality is thinner now than ever before.",
-  };
+  const personalAnswers = [q.question1, q.question2, q.question3, q.question4, q.question5]
+    .filter(Boolean)
+    .map((a, i) => `Q${i + 1}: ${a}`)
+    .join("\n");
 
-  const teaserText = teaserTexts[sunSign] || "The stars have much to reveal about your unique cosmic signature. A full reading awaits.";
+  const prompt = `You are a mystical, eloquent astrologer writing a personalised cosmic teaser reading for a client.
 
-  return { userId, sunSign, moonSign, ascendant, teaserText, element, luckyNumber };
+Client's birth details:
+- Date of birth: ${q.birthDate || "unknown"}
+- Time of birth: ${q.birthTime || "unknown"}
+- Place of birth: ${q.birthCity || "unknown"}
+- Sun sign: ${sunSign}
+- Moon sign: ${moonSign}
+- Rising sign: ${ascendant}
+- Dominant element: ${element}
+
+Their personal answers:
+${personalAnswers || "No personal answers provided yet."}
+
+Write a teaser reading of exactly 2–3 sentences. It must:
+- Feel deeply personal, as if you truly know this person
+- Be mystical, poetic and intriguing — not generic horoscope filler
+- End with a subtle hook that makes them want to unlock the full reading
+- Use present tense, speaking directly to them ("you", "your")
+- Never mention specific planets by name or use technical astrology jargon
+
+Respond with ONLY the teaser text — no titles, no labels, no extra commentary.`;
+
+  try {
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 200,
+      temperature: 0.85,
+    });
+    const teaserText = completion.choices[0]?.message?.content?.trim() ??
+      "The stars hold a profound story about your path — one that is unique and waiting to be revealed in full.";
+    return { userId, sunSign, moonSign, ascendant, teaserText, element, luckyNumber };
+  } catch (err) {
+    const fallback = `As a ${sunSign} born in ${q.birthCity || "the cosmos"}, your chart carries a rare signature the universe seldom writes twice. A convergence of forces is building quietly around your life right now. The full picture — and what it means for your next chapter — awaits within your complete reading.`;
+    return { userId, sunSign, moonSign, ascendant, teaserText: fallback, element, luckyNumber };
+  }
 }
 
 const router = Router();
@@ -131,16 +163,22 @@ router.post("/questionnaire/submit", async (req, res) => {
         .returning();
       questionnaire = updated;
     }
-    const teaserData = generateTeaser(userId, questionnaire);
+
+    const teaserData = await generateAITeaser(userId, questionnaire);
+
     const existingTeaser = await db.select().from(teasersTable).where(eq(teasersTable.userId, userId));
     let teaser;
     if (existingTeaser.length === 0) {
       const [created] = await db.insert(teasersTable).values(teaserData).returning();
       teaser = created;
     } else {
-      const [updated] = await db.update(teasersTable).set({ ...teaserData, generatedAt: new Date() }).where(eq(teasersTable.userId, userId)).returning();
+      const [updated] = await db.update(teasersTable)
+        .set({ ...teaserData, generatedAt: new Date() })
+        .where(eq(teasersTable.userId, userId))
+        .returning();
       teaser = updated;
     }
+
     return res.json({ questionnaire, teaser });
   } catch (err) {
     req.log.error({ err }, "Error submitting questionnaire");
