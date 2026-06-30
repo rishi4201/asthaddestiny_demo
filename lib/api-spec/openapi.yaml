@@ -1,22 +1,26 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Astrology Platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: users
+  - name: questionnaire
+  - name: chat
+  - name: admin
+  - name: payments
+  - name: storage
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +28,323 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ── USER PROFILE ──────────────────────────────────────────────────────────
+  /users/me:
+    get:
+      operationId: getMyProfile
+      tags: [users]
+      summary: Get current user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "404":
+          description: Not found
+    put:
+      operationId: upsertMyProfile
+      tags: [users]
+      summary: Create or update current user profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserProfileInput"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  # ── QUESTIONNAIRE ─────────────────────────────────────────────────────────
+  /questionnaire:
+    get:
+      operationId: getMyQuestionnaire
+      tags: [questionnaire]
+      summary: Get current user's questionnaire answers
+      responses:
+        "200":
+          description: Questionnaire
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Questionnaire"
+        "404":
+          description: Not started yet
+
+  /questionnaire/step:
+    patch:
+      operationId: saveQuestionnaireStep
+      tags: [questionnaire]
+      summary: Auto-save a single step of the questionnaire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/QuestionnaireStepInput"
+      responses:
+        "200":
+          description: Saved step
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Questionnaire"
+
+  /questionnaire/submit:
+    post:
+      operationId: submitQuestionnaire
+      tags: [questionnaire]
+      summary: Submit the questionnaire and generate teaser
+      responses:
+        "200":
+          description: Submitted with teaser
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/QuestionnaireWithTeaser"
+
+  /questionnaire/teaser:
+    get:
+      operationId: getTeaser
+      tags: [questionnaire]
+      summary: Get teaser summary for current user
+      responses:
+        "200":
+          description: Teaser summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeaserSummary"
+        "404":
+          description: Questionnaire not submitted
+
+  # ── CHAT ──────────────────────────────────────────────────────────────────
+  /chats/messages:
+    get:
+      operationId: getChatMessages
+      tags: [chat]
+      summary: Get current user's chat messages
+      responses:
+        "200":
+          description: Messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+    post:
+      operationId: sendChatMessage
+      tags: [chat]
+      summary: Send a chat message (text or reference an uploaded image)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ChatMessageInput"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatMessage"
+
+  /chats/messages/{id}:
+    delete:
+      operationId: deleteChatMessage
+      tags: [chat]
+      summary: Delete a chat message
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ── STORAGE ───────────────────────────────────────────────────────────────
+  /storage/uploads/request-url:
+    post:
+      operationId: requestUploadUrl
+      tags: [storage]
+      summary: Request a presigned upload URL for palm/image uploads
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadUrlRequest"
+      responses:
+        "200":
+          description: Presigned URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+
+  /storage/objects/{objectPath}:
+    get:
+      operationId: getStorageObject
+      tags: [storage]
+      summary: Serve a private stored object
+      parameters:
+        - name: objectPath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Object content
+
+  # ── PAYMENTS ──────────────────────────────────────────────────────────────
+  /payments/create-intent:
+    post:
+      operationId: createPaymentIntent
+      tags: [payments]
+      summary: Create a Stripe Payment Intent for full report unlock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PaymentIntentInput"
+      responses:
+        "200":
+          description: Client secret
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentIntentResponse"
+
+  /payments/status:
+    get:
+      operationId: getPaymentStatus
+      tags: [payments]
+      summary: Get current user's payment/subscription status
+      responses:
+        "200":
+          description: Payment status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentStatus"
+
+  # ── ADMIN ─────────────────────────────────────────────────────────────────
+  /admin/users:
+    get:
+      operationId: adminListUsers
+      tags: [admin]
+      summary: List all registered users (admin only)
+      responses:
+        "200":
+          description: Users list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminUserView"
+        "403":
+          description: Forbidden
+
+  /admin/users/{userId}/questionnaire:
+    get:
+      operationId: adminGetUserQuestionnaire
+      tags: [admin]
+      summary: Get a user's questionnaire (admin only)
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Questionnaire
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Questionnaire"
+        "403":
+          description: Forbidden
+
+  /admin/users/{userId}/chat:
+    get:
+      operationId: adminGetUserChat
+      tags: [admin]
+      summary: Get a user's chat messages (admin only)
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Chat messages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ChatMessage"
+        "403":
+          description: Forbidden
+
+  /admin/users/{userId}/chat/reply:
+    post:
+      operationId: adminReplyChatMessage
+      tags: [admin]
+      summary: Admin replies to a user's chat
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminChatReplyInput"
+      responses:
+        "201":
+          description: Reply sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChatMessage"
+        "403":
+          description: Forbidden
+
+  /admin/stats:
+    get:
+      operationId: adminGetStats
+      tags: [admin]
+      summary: Dashboard stats (total users, questionnaires submitted, paid users)
+      responses:
+        "200":
+          description: Stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStats"
+        "403":
+          description: Forbidden
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +352,160 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    UserProfile:
+      type: object
+      required: [id, clerkUserId, email, createdAt]
+      properties:
+        id:            { type: integer }
+        clerkUserId:   { type: string }
+        email:         { type: string }
+        name:          { type: ["string", "null"] }
+        avatarUrl:     { type: ["string", "null"] }
+        isAdmin:       { type: boolean }
+        hasPaidReport: { type: boolean }
+        createdAt:     { type: string }
+
+    UserProfileInput:
+      type: object
+      properties:
+        name:      { type: string }
+        avatarUrl: { type: string }
+
+    Questionnaire:
+      type: object
+      required: [id, userId, currentStep, status, createdAt]
+      properties:
+        id:          { type: integer }
+        userId:      { type: string }
+        currentStep: { type: integer }
+        status:      { type: string, enum: [draft, submitted] }
+        birthDate:   { type: ["string", "null"] }
+        birthTime:   { type: ["string", "null"] }
+        birthCity:   { type: ["string", "null"] }
+        question1:   { type: ["string", "null"] }
+        question2:   { type: ["string", "null"] }
+        question3:   { type: ["string", "null"] }
+        question4:   { type: ["string", "null"] }
+        question5:   { type: ["string", "null"] }
+        createdAt:   { type: string }
+        updatedAt:   { type: string }
+
+    QuestionnaireStepInput:
+      type: object
+      required: [step]
+      properties:
+        step:      { type: integer }
+        birthDate: { type: string }
+        birthTime: { type: string }
+        birthCity: { type: string }
+        question1: { type: string }
+        question2: { type: string }
+        question3: { type: string }
+        question4: { type: string }
+        question5: { type: string }
+
+    TeaserSummary:
+      type: object
+      required: [userId, sunSign, moonSign, ascendant, teaserText, generatedAt]
+      properties:
+        userId:      { type: string }
+        sunSign:     { type: string }
+        moonSign:    { type: string }
+        ascendant:   { type: string }
+        teaserText:  { type: string }
+        element:     { type: ["string", "null"] }
+        luckyNumber: { type: ["integer", "null"] }
+        generatedAt: { type: string }
+
+    QuestionnaireWithTeaser:
+      type: object
+      required: [questionnaire, teaser]
+      properties:
+        questionnaire:
+          $ref: "#/components/schemas/Questionnaire"
+        teaser:
+          $ref: "#/components/schemas/TeaserSummary"
+
+    ChatMessage:
+      type: object
+      required: [id, userId, role, content, createdAt]
+      properties:
+        id:         { type: integer }
+        userId:     { type: string }
+        role:       { type: string, enum: [user, admin] }
+        content:    { type: string }
+        imageUrl:   { type: ["string", "null"] }
+        imageKey:   { type: ["string", "null"] }
+        createdAt:  { type: string }
+
+    ChatMessageInput:
+      type: object
+      required: [content]
+      properties:
+        content:  { type: string }
+        imageKey: { type: string }
+
+    AdminChatReplyInput:
+      type: object
+      required: [content]
+      properties:
+        content:  { type: string }
+        imageKey: { type: string }
+
+    UploadUrlRequest:
+      type: object
+      required: [filename, contentType]
+      properties:
+        filename:    { type: string }
+        contentType: { type: string }
+
+    UploadUrlResponse:
+      type: object
+      required: [uploadUrl, objectKey]
+      properties:
+        uploadUrl:  { type: string }
+        objectKey:  { type: string }
+
+    PaymentIntentInput:
+      type: object
+      required: [amount, currency]
+      properties:
+        amount:   { type: integer }
+        currency: { type: string }
+
+    PaymentIntentResponse:
+      type: object
+      required: [clientSecret]
+      properties:
+        clientSecret: { type: string }
+
+    PaymentStatus:
+      type: object
+      required: [hasPaidReport]
+      properties:
+        hasPaidReport: { type: boolean }
+        paidAt:        { type: ["string", "null"] }
+
+    AdminUserView:
+      type: object
+      required: [id, clerkUserId, email, createdAt, hasPaidReport, questionnaireStatus]
+      properties:
+        id:                  { type: integer }
+        clerkUserId:         { type: string }
+        email:               { type: string }
+        name:                { type: ["string", "null"] }
+        hasPaidReport:       { type: boolean }
+        questionnaireStatus: { type: ["string", "null"] }
+        lastChatAt:          { type: ["string", "null"] }
+        createdAt:           { type: string }
+
+    AdminStats:
+      type: object
+      required: [totalUsers, submittedQuestionnaires, paidUsers, recentUsers]
+      properties:
+        totalUsers:              { type: integer }
+        submittedQuestionnaires: { type: integer }
+        paidUsers:               { type: integer }
+        recentUsers:             { type: integer }

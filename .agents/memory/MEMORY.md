@@ -1,0 +1,2 @@
+- [Clerk version compatibility](clerk-version-compat.md) — @clerk/react@5.x conflicts with @clerk/express@2.x via @clerk/shared; upgrade react to 6.x to align on shared@4.x.
+- [Clerk v6 API changes](clerk-v6-api.md) — SignedIn/SignedOut components removed in @clerk/react@6; use useAuth() hook. publishableKeyFromHost gone from /internal; use env var directly.

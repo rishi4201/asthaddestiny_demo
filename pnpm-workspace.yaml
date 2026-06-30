@@ -33,6 +33,10 @@ minimumReleaseAgeExclude:
   # this setting guards against does not apply to our own packages.
   - '@replit/*'
   - stripe-replit-sync
+  # Clerk packages are published in lockstep; @clerk/react@5.x may need a newer
+  # patch of @clerk/shared than what the age-gate allows. Clerk is a trusted org.
+  - '@clerk/shared'
+  - '@clerk/react'
 
 packages:
   - artifacts/*

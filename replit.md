@@ -1,10 +1,11 @@
-# [Project name]
+# CosmicRead
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A full-stack astrology and palmistry platform where users answer a birth-chart questionnaire, receive AI-generated teasers, chat with the astrologer via a palmistry interface (image upload), and unlock a full personal report via Stripe paywall ($49). Includes an admin dashboard and office booking CTA.
 
 ## Run & Operate
 
 - `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/astrology-app run dev` — run the React frontend (port assigned by workflow)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -14,31 +15,53 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React 19 + Vite 7 + TailwindCSS 4 + Wouter (routing)
+- Auth: Clerk (`@clerk/react@^6`, `@clerk/express@^2`) — Replit-managed tenant
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
+- Payments: Stripe (STRIPE_SECRET_KEY needed; VITE_STRIPE_PUBLISHABLE_KEY for frontend)
+- Object storage: Replit Object Storage (palm images)
 - Validation: Zod (`zod/v4`), `drizzle-zod`
 - API codegen: Orval (from OpenAPI spec)
 - Build: esbuild (CJS bundle)
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/astrology-app/` — React/Vite frontend (all 10 pages)
+- `artifacts/api-server/` — Express 5 API server
+- `lib/api-spec/openapi.yaml` — source of truth for API contracts
+- `lib/api-client-react/` — generated React Query hooks + Zod schemas
+- `lib/db/src/schema/index.ts` — Drizzle DB schema (users, questionnaires, teasers, chatMessages)
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Contract-first: OpenAPI spec → Orval codegen → React Query hooks; server validates with Zod schemas
+- Clerk proxy: frontend posts to `/api/__clerk` which proxies to Clerk FAPI, avoiding mixed-origin issues
+- Palmistry chat images stored in Replit Object Storage; URLs sent to the chat message API
+- Stripe paywall gates the full report PDF; teaser is generated free
+- isAdmin flag in the `users` table gates the admin dashboard
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- Landing page with cosmic dark theme (CosmicRead branding, gold accent)
+- Sign up / Sign in via Clerk (email+password, Google)
+- Multi-step birth-chart questionnaire → AI teaser generation
+- Palmistry chat with palm image upload → AI chat interface
+- Stripe paywall ($49) for full personal report
+- Admin dashboard: view all users and their readings
+- Office booking CTA page
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Mobile-first design, dark cosmic theme, serif fonts, gold accents
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- **Clerk version compatibility**: Use `@clerk/react@^6` (not `^5`) to align with `@clerk/shared@^4.x` that `@clerk/express@^2` also uses. Mixing 5.x and 2.x causes `@clerk/shared` deduplication conflicts.
+- **Clerk v6 API**: `SignedIn`/`SignedOut` components are removed. Use `const { isSignedIn } = useAuth()` and conditional rendering instead.
+- **Clerk v6**: `publishableKeyFromHost` from `@clerk/react/internal` is gone — use `import.meta.env.VITE_CLERK_PUBLISHABLE_KEY` directly.
+- Admin user: set `is_admin = true` in DB `users` table manually for first admin
+- Stripe secret key (`STRIPE_SECRET_KEY`) must be configured for payments to work
 
 ## Pointers
 
