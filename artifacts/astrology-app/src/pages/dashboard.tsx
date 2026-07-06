@@ -27,10 +27,10 @@ export default function Dashboard() {
     return (
       <Layout>
         <div className="container mx-auto p-4 pt-8">
-          <Skeleton className="h-10 w-48 mb-8 bg-card" />
+          <Skeleton className="h-10 w-48 mb-8 bg-muted" />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Skeleton className="h-64 w-full bg-card" />
-            <Skeleton className="h-64 w-full bg-card" />
+            <Skeleton className="h-64 w-full bg-muted" />
+            <Skeleton className="h-64 w-full bg-muted" />
           </div>
         </div>
       </Layout>
@@ -43,15 +43,14 @@ export default function Dashboard() {
 
   return (
     <Layout>
-      <div className="container mx-auto p-4 pt-8 pb-20">
-        <h1 className="text-3xl font-serif mb-8 text-foreground">Welcome, {profile?.name || user.firstName || "Seeker"}</h1>
+      <div className="container mx-auto p-4 pt-8 pb-20 bg-background">
+        <h1 className="text-3xl font-sans font-bold mb-8 text-foreground">Welcome, {profile?.name || user.firstName || "Seeker"}</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Questionnaire / Reading Status */}
-          <Card className="bg-card/50 backdrop-blur-sm border-primary/20 shadow-xl overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent" />
+          <Card className="bg-card border-border shadow-sm overflow-hidden relative rounded-2xl">
+            <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
             <CardHeader>
-              <CardTitle className="font-serif flex items-center gap-2">
+              <CardTitle className="font-sans font-bold flex items-center gap-2 text-foreground">
                 <Star className="w-5 h-5 text-primary" />
                 Your Cosmic Reading
               </CardTitle>
@@ -61,7 +60,7 @@ export default function Dashboard() {
                 <div className="text-center py-6">
                   <p className="text-muted-foreground mb-4">Your journey begins with a few questions about your birth and life path.</p>
                   <Link href="/questionnaire">
-                    <Button className="w-full">Start Questionnaire</Button>
+                    <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-semibold">Start Questionnaire</Button>
                   </Link>
                 </div>
               )}
@@ -69,40 +68,40 @@ export default function Dashboard() {
                 <div className="text-center py-6">
                   <p className="text-muted-foreground mb-4">You have an unfinished questionnaire. We await your remaining details.</p>
                   <Link href="/questionnaire">
-                    <Button className="w-full">Continue Questionnaire</Button>
+                    <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-semibold">Continue Questionnaire</Button>
                   </Link>
                 </div>
               )}
               {hasSubmitted && (
                 <div className="space-y-4">
                   {isTeaserLoading ? (
-                    <Skeleton className="h-20 w-full bg-background" />
+                    <Skeleton className="h-20 w-full bg-muted" />
                   ) : teaser ? (
-                    <div className="bg-background/50 rounded-lg p-4 border border-border">
+                    <div className="bg-muted/50 rounded-xl p-4 border border-border">
                       <div className="flex gap-4 mb-4 justify-center">
                         <div className="text-center">
-                          <span className="block text-xs text-muted-foreground uppercase tracking-widest">Sun</span>
-                          <span className="font-serif text-primary">{teaser.sunSign}</span>
+                          <span className="block text-xs font-semibold text-muted-foreground uppercase tracking-widest">Sun</span>
+                          <span className="font-sans font-bold text-primary">{teaser.sunSign}</span>
                         </div>
                         <div className="text-center">
-                          <span className="block text-xs text-muted-foreground uppercase tracking-widest">Moon</span>
-                          <span className="font-serif text-primary">{teaser.moonSign}</span>
+                          <span className="block text-xs font-semibold text-muted-foreground uppercase tracking-widest">Moon</span>
+                          <span className="font-sans font-bold text-primary">{teaser.moonSign}</span>
                         </div>
                         <div className="text-center">
-                          <span className="block text-xs text-muted-foreground uppercase tracking-widest">Rising</span>
-                          <span className="font-serif text-primary">{teaser.ascendant}</span>
+                          <span className="block text-xs font-semibold text-muted-foreground uppercase tracking-widest">Rising</span>
+                          <span className="font-sans font-bold text-primary">{teaser.ascendant}</span>
                         </div>
                       </div>
-                      <p className="text-sm italic text-center text-muted-foreground">"{teaser.teaserText}"</p>
+                      <p className="text-sm italic text-center text-foreground">"{teaser.teaserText}"</p>
                     </div>
                   ) : null}
 
                   {!profile?.hasPaidReport ? (
-                    <div className="mt-6 bg-accent/10 border border-accent/30 rounded-lg p-4 text-center">
-                      <h3 className="font-serif text-lg mb-2">Unlock Your Full Report</h3>
+                    <div className="mt-6 bg-accent/5 border border-accent/20 rounded-xl p-4 text-center">
+                      <h3 className="font-sans font-bold text-lg mb-2 text-foreground">Unlock Your Full Report</h3>
                       <p className="text-sm text-muted-foreground mb-4">Discover the deep insights of your birth chart and palm lines.</p>
                       <Link href="/payment">
-                        <Button variant="outline" className="w-full border-accent text-accent hover:bg-accent hover:text-accent-foreground">
+                        <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 rounded-full font-semibold shadow-sm">
                           Upgrade to Full Report
                         </Button>
                       </Link>
@@ -110,8 +109,8 @@ export default function Dashboard() {
                   ) : (
                     <div className="mt-6 text-center">
                       <Link href="/profile">
-                        <Button variant="outline" className="w-full">
-                          <BookOpen className="w-4 h-4 mr-2" />
+                        <Button variant="outline" className="w-full rounded-full border-border hover:bg-muted font-semibold">
+                          <BookOpen className="w-4 h-4 mr-2 text-primary" />
                           View Full Report
                         </Button>
                       </Link>
@@ -122,24 +121,23 @@ export default function Dashboard() {
             </CardContent>
           </Card>
 
-          {/* Chat Preview */}
-          <Card className="bg-card/50 backdrop-blur-sm border-border shadow-lg">
+          <Card className="bg-card border-border shadow-sm rounded-2xl">
             <CardHeader>
-              <CardTitle className="font-serif flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-accent" />
+              <CardTitle className="font-sans font-bold flex items-center gap-2 text-foreground">
+                <MessageCircle className="w-5 h-5 text-primary" />
                 Sanctum Chat
               </CardTitle>
               <CardDescription>Speak directly with your astrologer</CardDescription>
             </CardHeader>
             <CardContent>
               {isChatLoading ? (
-                <Skeleton className="h-20 w-full bg-background" />
+                <Skeleton className="h-20 w-full bg-muted" />
               ) : recentChat ? (
-                <div className="bg-background/50 rounded-lg p-4 border border-border">
-                  <span className="text-xs text-muted-foreground mb-1 block">
+                <div className="bg-muted/50 rounded-xl p-4 border border-border">
+                  <span className="text-xs font-semibold text-muted-foreground mb-1 block">
                     {recentChat.role === "user" ? "You" : "Astrologer"}
                   </span>
-                  <p className="text-sm line-clamp-2 text-foreground/90">
+                  <p className="text-sm line-clamp-2 text-foreground">
                     {recentChat.content || (recentChat.imageUrl ? "Uploaded an image" : "Message")}
                   </p>
                 </div>
@@ -151,19 +149,18 @@ export default function Dashboard() {
             </CardContent>
             <CardFooter>
               <Link href="/chat" className="w-full">
-                <Button variant="secondary" className="w-full group">
+                <Button variant="outline" className="w-full group rounded-full border-border hover:bg-muted font-semibold">
                   Enter Chat
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 ml-2 text-primary group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
             </CardFooter>
           </Card>
           
-          {/* Booking Preview */}
           {profile?.hasPaidReport && (
-            <Card className="bg-card/50 backdrop-blur-sm border-border shadow-lg lg:col-span-2">
+            <Card className="bg-card border-border shadow-sm rounded-2xl lg:col-span-2">
               <CardHeader>
-                <CardTitle className="font-serif flex items-center gap-2">
+                <CardTitle className="font-sans font-bold flex items-center gap-2 text-foreground">
                   <Sparkles className="w-5 h-5 text-primary" />
                   In-Person Consultation
                 </CardTitle>
@@ -173,7 +170,7 @@ export default function Dashboard() {
                   Ready to delve deeper? Schedule an in-person reading at our physical sanctuary.
                 </p>
                 <Link href="/booking">
-                  <Button>Book Visit</Button>
+                  <Button className="rounded-full bg-primary text-primary-foreground font-semibold px-6">Book Visit</Button>
                 </Link>
               </CardContent>
             </Card>

@@ -40,8 +40,8 @@ export default function Profile() {
     return (
       <Layout>
         <div className="container mx-auto p-4 pt-12 max-w-2xl">
-          <Skeleton className="h-10 w-48 mb-8 bg-card" />
-          <Skeleton className="h-64 w-full bg-card" />
+          <Skeleton className="h-10 w-48 mb-8 bg-muted" />
+          <Skeleton className="h-64 w-full bg-muted rounded-2xl" />
         </div>
       </Layout>
     );
@@ -49,39 +49,39 @@ export default function Profile() {
 
   return (
     <Layout>
-      <div className="container mx-auto p-4 pt-12 pb-24 max-w-2xl">
-        <h1 className="text-3xl font-serif mb-8 text-foreground">Your Identity</h1>
+      <div className="container mx-auto p-4 pt-12 pb-24 max-w-2xl bg-background">
+        <h1 className="text-3xl font-sans font-bold mb-8 text-foreground">Your Profile</h1>
 
         <div className="space-y-6">
-          <Card className="bg-card/50 border-border">
-            <CardHeader>
-              <CardTitle className="font-serif flex items-center gap-2">
+          <Card className="bg-card border-border shadow-sm rounded-2xl">
+            <CardHeader className="bg-muted/30 border-b border-border">
+              <CardTitle className="font-sans font-bold flex items-center gap-2 text-foreground">
                 <UserCircle className="w-5 h-5 text-primary" />
                 Personal Details
               </CardTitle>
-              <CardDescription>How you are known in the sanctum.</CardDescription>
+              <CardDescription className="font-medium">Manage your account information.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <form onSubmit={handleSave} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" value={profile?.email || ""} disabled className="bg-muted/50" />
-                  <p className="text-xs text-muted-foreground">Linked to your authentication provider.</p>
+                  <Label htmlFor="email" className="font-semibold text-foreground">Email</Label>
+                  <Input id="email" value={profile?.email || ""} disabled className="bg-muted/50 border-border" />
+                  <p className="text-xs font-medium text-muted-foreground">Linked to your authentication provider.</p>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="name">Preferred Name</Label>
+                  <Label htmlFor="name" className="font-semibold text-foreground">Preferred Name</Label>
                   <Input 
                     id="name" 
                     value={name} 
                     onChange={(e) => setName(e.target.value)}
                     placeholder="How should we address you?"
-                    className="bg-background"
+                    className="bg-background border-border shadow-sm"
                   />
                 </div>
 
                 <div className="pt-4">
-                  <Button type="submit" disabled={upsertProfile.isPending}>
+                  <Button type="submit" disabled={upsertProfile.isPending} className="bg-accent text-accent-foreground rounded-full font-semibold px-6 hover:bg-accent/90">
                     {upsertProfile.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
                     Save Changes
                   </Button>
@@ -90,24 +90,24 @@ export default function Profile() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card/50 border-border">
-            <CardHeader>
-              <CardTitle className="font-serif flex items-center gap-2">
-                <ShieldCheck className="w-5 h-5 text-accent" />
+          <Card className="bg-card border-border shadow-sm rounded-2xl">
+            <CardHeader className="bg-muted/30 border-b border-border">
+              <CardTitle className="font-sans font-bold flex items-center gap-2 text-foreground">
+                <ShieldCheck className="w-5 h-5 text-primary" />
                 Account Status
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               <div className="flex flex-col gap-4">
                 <div className="flex justify-between items-center py-3 border-b border-border/50">
-                  <span className="text-muted-foreground">Full Report Access</span>
-                  <span className={`font-medium ${profile?.hasPaidReport ? 'text-primary' : 'text-muted-foreground'}`}>
+                  <span className="text-muted-foreground font-semibold">Full Report Access</span>
+                  <span className={`font-bold ${profile?.hasPaidReport ? 'text-primary' : 'text-muted-foreground'}`}>
                     {profile?.hasPaidReport ? 'Active' : 'Not Purchased'}
                   </span>
                 </div>
                 <div className="flex justify-between items-center py-3 border-b border-border/50">
-                  <span className="text-muted-foreground">Member Since</span>
-                  <span className="text-foreground">
+                  <span className="text-muted-foreground font-semibold">Member Since</span>
+                  <span className="text-foreground font-bold">
                     {profile?.createdAt ? new Date(profile.createdAt).toLocaleDateString() : 'Unknown'}
                   </span>
                 </div>

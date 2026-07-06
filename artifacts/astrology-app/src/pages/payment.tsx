@@ -46,15 +46,15 @@ function CheckoutForm({ clientSecret, onSuccess }: { clientSecret: string, onSuc
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="p-4 bg-background/50 rounded-xl border border-border">
+      <div className="p-4 bg-background rounded-xl border border-border">
         <PaymentElement options={{ 
-          theme: 'night',
+          theme: 'stripe',
           variables: {
-            colorPrimary: '#e6b953',
-            colorBackground: '#1a1025',
-            colorText: '#faebd7',
-            colorDanger: '#df1b41',
-            fontFamily: 'system-ui, sans-serif',
+            colorPrimary: '#F97316',
+            colorBackground: '#ffffff',
+            colorText: '#1a1a1a',
+            colorDanger: '#ef4444',
+            fontFamily: 'Inter, system-ui, sans-serif',
             spacingUnit: '4px',
             borderRadius: '8px',
           }
@@ -64,7 +64,7 @@ function CheckoutForm({ clientSecret, onSuccess }: { clientSecret: string, onSuc
       <Button 
         type="submit" 
         disabled={!stripe || isLoading} 
-        className="w-full h-14 text-lg bg-primary text-primary-foreground hover:bg-primary/90"
+        className="w-full h-14 text-lg bg-accent text-accent-foreground hover:bg-accent/90 font-bold rounded-full shadow-sm"
       >
         {isLoading ? (
           <Loader2 className="w-5 h-5 mr-2 animate-spin" />
@@ -74,7 +74,7 @@ function CheckoutForm({ clientSecret, onSuccess }: { clientSecret: string, onSuc
         Pay $49.00
       </Button>
       
-      <p className="text-center text-xs text-muted-foreground flex items-center justify-center gap-1">
+      <p className="text-center text-xs font-semibold text-muted-foreground flex items-center justify-center gap-1">
         <Lock className="w-3 h-3" /> Secure encrypted payment
       </p>
     </form>
@@ -109,10 +109,10 @@ export default function Payment() {
     return (
       <Layout>
         <div className="container mx-auto p-4 pt-12 max-w-4xl">
-          <Skeleton className="h-12 w-64 mx-auto mb-12 bg-card" />
+          <Skeleton className="h-12 w-64 mx-auto mb-12 bg-muted" />
           <div className="grid md:grid-cols-2 gap-8">
-            <Skeleton className="h-96 w-full bg-card rounded-2xl" />
-            <Skeleton className="h-96 w-full bg-card rounded-2xl" />
+            <Skeleton className="h-96 w-full bg-muted rounded-2xl" />
+            <Skeleton className="h-96 w-full bg-muted rounded-2xl" />
           </div>
         </div>
       </Layout>
@@ -121,56 +121,56 @@ export default function Payment() {
 
   return (
     <Layout>
-      <div className="container mx-auto p-4 pt-12 pb-24 max-w-5xl">
+      <div className="container mx-auto p-4 pt-12 pb-24 max-w-5xl bg-background">
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-medium tracking-wide mb-6">
+          <div className="inline-flex items-center justify-center px-4 py-1.5 rounded-full border border-primary/30 bg-primary/5 text-primary text-sm font-semibold tracking-wide mb-6">
             <Sparkles className="w-4 h-4 mr-2" />
             Deepen Your Insight
           </div>
-          <h1 className="text-4xl md:text-5xl font-serif text-foreground">Unlock the Full Report</h1>
+          <h1 className="text-4xl md:text-5xl font-sans font-bold text-foreground">Unlock the Full Report</h1>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12 items-start">
           {/* What's included */}
           <div className="space-y-8">
             <div>
-              <h2 className="text-2xl font-serif mb-6 text-primary">Your comprehensive reading includes:</h2>
+              <h2 className="text-2xl font-sans font-bold mb-6 text-foreground">Your comprehensive reading includes:</h2>
               <ul className="space-y-4">
                 {[
                   "Detailed natal chart analysis (Sun, Moon, Rising, Houses)",
                   "Current planetary transits and how they affect your path",
                   "Deep dive into your palm's major and minor lines",
-                  "Direct ongoing chat access to your seer",
+                  "Direct ongoing chat access to your astrologer",
                   "Priority booking for physical sanctuary visits",
                   "Life cycle timing and predictions"
                 ].map((item, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-                    <span className="text-foreground/90">{item}</span>
+                    <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-foreground font-medium">{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
             
-            <div className="p-6 bg-card/40 border border-border rounded-2xl italic text-muted-foreground">
-              "The universe speaks in whispers. A full reading amplifies that voice, giving you the clarity needed to navigate your destiny."
+            <div className="p-6 bg-muted/50 border border-border rounded-2xl italic text-foreground font-medium">
+              "A full reading amplifies clarity, giving you the insights needed to navigate your destiny with confidence."
             </div>
           </div>
 
           {/* Payment Form */}
-          <Card className="bg-card/80 backdrop-blur-md border-primary/20 shadow-2xl overflow-hidden relative">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary via-accent to-primary" />
-            <CardHeader className="pb-6">
-              <CardTitle className="text-2xl font-serif">Complete Purchase</CardTitle>
-              <CardDescription className="text-base mt-2">One-time payment of <strong className="text-foreground">$49.00</strong></CardDescription>
+          <Card className="bg-card border border-border shadow-md rounded-2xl overflow-hidden relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-primary" />
+            <CardHeader className="pb-6 bg-muted/20 border-b border-border">
+              <CardTitle className="text-2xl font-sans font-bold text-foreground">Complete Purchase</CardTitle>
+              <CardDescription className="text-base mt-2 font-medium">One-time payment of <strong className="text-foreground">$49.00</strong></CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-6">
               {clientSecret && stripePromise ? (
-                <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night' } }}>
+                <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
                   <CheckoutForm clientSecret={clientSecret} onSuccess={() => setLocation("/dashboard")} />
                 </Elements>
               ) : (
-                <div className="p-12 text-center text-muted-foreground">
+                <div className="p-12 text-center text-muted-foreground font-semibold">
                   Initializing secure gateway...
                 </div>
               )}

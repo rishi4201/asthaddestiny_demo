@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Camera, Send, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Camera, Send, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 export default function Chat() {
@@ -82,12 +82,12 @@ export default function Chat() {
 
   return (
     <Layout>
-      <div className="flex-1 flex flex-col h-[calc(100dvh-4rem)]">
+      <div className="flex-1 flex flex-col h-[calc(100dvh-4rem)] bg-background">
         {/* Chat Header */}
-        <div className="border-b border-border/50 bg-card/30 backdrop-blur-md p-4 flex items-center justify-between">
+        <div className="border-b border-border bg-card p-4 flex items-center justify-between">
           <div>
-            <h2 className="font-serif text-lg">Sanctum Chat</h2>
-            <p className="text-xs text-muted-foreground">Your astrologer is attentive.</p>
+            <h2 className="font-sans font-bold text-lg text-foreground">Chat with Astrologer</h2>
+            <p className="text-xs font-medium text-muted-foreground">Usually responds within minutes</p>
           </div>
         </div>
 
@@ -97,15 +97,15 @@ export default function Chat() {
             {isLoading ? (
               Array.from({ length: 4 }).map((_, i) => (
                 <div key={i} className={`flex ${i % 2 === 0 ? 'justify-end' : 'justify-start'}`}>
-                  <Skeleton className="h-16 w-64 bg-card rounded-2xl" />
+                  <Skeleton className="h-16 w-64 bg-muted rounded-2xl" />
                 </div>
               ))
             ) : messages?.length === 0 ? (
               <div className="text-center py-20 text-muted-foreground space-y-4">
-                <div className="w-16 h-16 rounded-full bg-card flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
                   <Camera className="w-8 h-8 text-muted-foreground/50" />
                 </div>
-                <p>Upload a clear photo of your dominant hand to begin.</p>
+                <p className="font-medium text-foreground">Upload a clear photo of your dominant hand to begin.</p>
               </div>
             ) : (
               messages?.map((msg) => {
@@ -114,13 +114,13 @@ export default function Chat() {
                   <div key={msg.id} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
                     <div className={`max-w-[80%] rounded-2xl p-4 ${
                       isUser 
-                        ? 'bg-primary/20 text-foreground border border-primary/20 rounded-br-sm' 
-                        : 'bg-card border border-border rounded-bl-sm'
+                        ? 'bg-primary/10 text-foreground border border-primary/20 rounded-br-sm' 
+                        : 'bg-muted border border-border rounded-bl-sm'
                     }`}>
-                      <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                      <p className="text-sm font-medium whitespace-pre-wrap">{msg.content}</p>
                       
                       {msg.imageKey && (
-                        <div className="mt-3 rounded-xl overflow-hidden border border-border/50">
+                        <div className="mt-3 rounded-xl overflow-hidden border border-border/50 bg-white">
                           <img 
                             src={`/api/storage/objects/${msg.imageKey}`} 
                             alt="Palm upload" 
@@ -130,7 +130,7 @@ export default function Chat() {
                         </div>
                       )}
                       
-                      <span className="text-[10px] text-muted-foreground block mt-2 opacity-60">
+                      <span className="text-[10px] font-semibold text-muted-foreground block mt-2 opacity-80">
                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
                     </div>
@@ -141,9 +141,9 @@ export default function Chat() {
             
             {isUploading && (
               <div className="flex justify-end">
-                <div className="max-w-[80%] rounded-2xl p-4 bg-primary/10 border border-primary/20 rounded-br-sm flex items-center gap-3">
+                <div className="max-w-[80%] rounded-2xl p-4 bg-primary/5 border border-primary/20 rounded-br-sm flex items-center gap-3">
                   <Loader2 className="w-4 h-4 animate-spin text-primary" />
-                  <span className="text-sm text-muted-foreground">Transmitting image...</span>
+                  <span className="text-sm font-medium text-muted-foreground">Transmitting image...</span>
                 </div>
               </div>
             )}
@@ -151,10 +151,10 @@ export default function Chat() {
         </ScrollArea>
 
         {/* Input Area */}
-        <div className="p-4 bg-background border-t border-border">
+        <div className="p-4 bg-card border-t border-border">
           <div className="max-w-3xl mx-auto">
             <form onSubmit={handleSend} className="flex items-end gap-2 relative">
-              <div className="flex-1 bg-card border border-border rounded-2xl flex items-end p-1 focus-within:border-primary/50 transition-colors">
+              <div className="flex-1 bg-background border border-border rounded-full flex items-center p-1 px-2 focus-within:border-primary/50 transition-colors shadow-sm">
                 
                 {/* Hidden file input */}
                 <input 
@@ -171,7 +171,7 @@ export default function Chat() {
                   type="button" 
                   variant="ghost" 
                   size="icon" 
-                  className="h-10 w-10 rounded-xl shrink-0 text-muted-foreground hover:text-foreground"
+                  className="h-10 w-10 rounded-full shrink-0 text-muted-foreground hover:text-primary hover:bg-primary/10"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
                 >
@@ -182,7 +182,7 @@ export default function Chat() {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask a question..."
-                  className="border-0 bg-transparent shadow-none focus-visible:ring-0 h-10 px-2"
+                  className="border-0 bg-transparent shadow-none focus-visible:ring-0 h-10 px-2 font-medium"
                   disabled={isUploading}
                 />
               </div>
@@ -190,7 +190,7 @@ export default function Chat() {
               <Button 
                 type="submit" 
                 size="icon" 
-                className="h-12 w-12 rounded-2xl shrink-0 bg-primary text-primary-foreground shadow-lg hover:shadow-primary/20"
+                className="h-12 w-12 rounded-full shrink-0 bg-accent text-accent-foreground shadow-sm hover:bg-accent/90"
                 disabled={!input.trim() || isUploading}
               >
                 <Send className="w-5 h-5" />

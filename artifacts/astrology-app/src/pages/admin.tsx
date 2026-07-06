@@ -27,7 +27,7 @@ export default function Admin() {
     return (
       <Layout>
         <div className="container mx-auto p-4 pt-12">
-          <Skeleton className="h-10 w-48 mb-8 bg-card" />
+          <Skeleton className="h-10 w-48 mb-8 bg-muted" />
         </div>
       </Layout>
     );
@@ -35,54 +35,54 @@ export default function Admin() {
 
   return (
     <Layout>
-      <div className="container mx-auto p-4 pt-12 pb-24">
+      <div className="container mx-auto p-4 pt-12 pb-24 bg-background">
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-serif text-foreground">Inner Sanctum Control</h1>
-          <Badge variant="outline" className="border-destructive text-destructive bg-destructive/10">
+          <h1 className="text-3xl font-sans font-bold text-foreground">Admin Dashboard</h1>
+          <Badge variant="outline" className="border-destructive text-destructive bg-destructive/10 font-bold">
             Admin Access
           </Badge>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-          <Card className="bg-card border-border shadow-md">
+          <Card className="bg-card border-border shadow-sm rounded-xl">
             <CardContent className="p-6 flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Total Users</p>
-                <h3 className="text-3xl font-bold">{isStatsLoading ? <Skeleton className="h-9 w-16" /> : stats?.totalUsers}</h3>
+                <p className="text-sm font-bold text-muted-foreground mb-1">Total Users</p>
+                <h3 className="text-3xl font-bold text-foreground">{isStatsLoading ? <Skeleton className="h-9 w-16" /> : stats?.totalUsers}</h3>
               </div>
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                 <Users className="w-6 h-6" />
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-card border-border shadow-md">
+          <Card className="bg-card border-border shadow-sm rounded-xl">
             <CardContent className="p-6 flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Submitted Qs</p>
-                <h3 className="text-3xl font-bold">{isStatsLoading ? <Skeleton className="h-9 w-16" /> : stats?.submittedQuestionnaires}</h3>
+                <p className="text-sm font-bold text-muted-foreground mb-1">Submitted Qs</p>
+                <h3 className="text-3xl font-bold text-foreground">{isStatsLoading ? <Skeleton className="h-9 w-16" /> : stats?.submittedQuestionnaires}</h3>
               </div>
               <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent">
                 <FileText className="w-6 h-6" />
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-card border-border shadow-md">
+          <Card className="bg-card border-border shadow-sm rounded-xl">
             <CardContent className="p-6 flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">Paid Reports</p>
-                <h3 className="text-3xl font-bold">{isStatsLoading ? <Skeleton className="h-9 w-16" /> : stats?.paidUsers}</h3>
+                <p className="text-sm font-bold text-muted-foreground mb-1">Paid Reports</p>
+                <h3 className="text-3xl font-bold text-foreground">{isStatsLoading ? <Skeleton className="h-9 w-16" /> : stats?.paidUsers}</h3>
               </div>
               <div className="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
                 <CreditCard className="w-6 h-6" />
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-card border-border shadow-md">
+          <Card className="bg-card border-border shadow-sm rounded-xl">
             <CardContent className="p-6 flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">New Users (30d)</p>
-                <h3 className="text-3xl font-bold">{isStatsLoading ? <Skeleton className="h-9 w-16" /> : stats?.recentUsers}</h3>
+                <p className="text-sm font-bold text-muted-foreground mb-1">New Users (30d)</p>
+                <h3 className="text-3xl font-bold text-foreground">{isStatsLoading ? <Skeleton className="h-9 w-16" /> : stats?.recentUsers}</h3>
               </div>
               <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
                 <Activity className="w-6 h-6" />
@@ -92,57 +92,57 @@ export default function Admin() {
         </div>
 
         {/* Users Table */}
-        <Card className="bg-card border-border shadow-lg">
-          <CardHeader>
-            <CardTitle className="font-serif">Seekers Directory</CardTitle>
+        <Card className="bg-card border-border shadow-sm rounded-xl">
+          <CardHeader className="border-b border-border bg-muted/20">
+            <CardTitle className="font-sans font-bold text-foreground">User Directory</CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             {isUsersLoading ? (
-              <div className="space-y-4">
-                <Skeleton className="h-12 w-full bg-background" />
-                <Skeleton className="h-12 w-full bg-background" />
-                <Skeleton className="h-12 w-full bg-background" />
+              <div className="space-y-4 p-6">
+                <Skeleton className="h-12 w-full bg-muted" />
+                <Skeleton className="h-12 w-full bg-muted" />
+                <Skeleton className="h-12 w-full bg-muted" />
               </div>
             ) : !users || users.length === 0 ? (
-              <div className="text-center py-10 text-muted-foreground">No users found.</div>
+              <div className="text-center py-10 text-muted-foreground font-medium">No users found.</div>
             ) : (
-              <div className="rounded-md border border-border overflow-hidden">
+              <div className="overflow-x-auto">
                 <Table>
                   <TableHeader className="bg-muted/50">
                     <TableRow>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Name</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead>Paid</TableHead>
-                      <TableHead>Joined</TableHead>
+                      <TableHead className="font-bold">Email</TableHead>
+                      <TableHead className="font-bold">Name</TableHead>
+                      <TableHead className="font-bold">Status</TableHead>
+                      <TableHead className="font-bold">Paid</TableHead>
+                      <TableHead className="font-bold">Joined</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {users.map((u) => (
                       <TableRow 
                         key={u.id} 
-                        className="cursor-pointer hover:bg-muted/30 transition-colors"
+                        className="cursor-pointer hover:bg-muted/50 transition-colors"
                         onClick={() => setLocation(`/admin/users/${u.clerkUserId}`)}
                       >
-                        <TableCell className="font-medium">{u.email}</TableCell>
-                        <TableCell>{u.name || <span className="text-muted-foreground italic">None</span>}</TableCell>
+                        <TableCell className="font-semibold text-foreground">{u.email}</TableCell>
+                        <TableCell className="font-medium text-muted-foreground">{u.name || <span className="italic">None</span>}</TableCell>
                         <TableCell>
                           {u.questionnaireStatus === "submitted" ? (
-                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">Submitted</Badge>
+                            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 font-bold">Submitted</Badge>
                           ) : u.questionnaireStatus === "draft" ? (
-                            <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20">Draft</Badge>
+                            <Badge variant="outline" className="bg-accent/10 text-accent border-accent/20 font-bold">Draft</Badge>
                           ) : (
-                            <Badge variant="outline" className="text-muted-foreground border-border">None</Badge>
+                            <Badge variant="outline" className="text-muted-foreground border-border font-bold">None</Badge>
                           )}
                         </TableCell>
                         <TableCell>
                           {u.hasPaidReport ? (
-                            <span className="text-green-500 font-medium">Yes</span>
+                            <span className="text-green-600 font-bold">Yes</span>
                           ) : (
-                            <span className="text-muted-foreground">No</span>
+                            <span className="text-muted-foreground font-medium">No</span>
                           )}
                         </TableCell>
-                        <TableCell className="text-muted-foreground text-sm">
+                        <TableCell className="text-muted-foreground font-medium text-sm">
                           {new Date(u.createdAt).toLocaleDateString()}
                         </TableCell>
                       </TableRow>

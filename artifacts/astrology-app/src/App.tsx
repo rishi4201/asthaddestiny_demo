@@ -35,28 +35,27 @@ if (!clerkPubKey) {
 }
 
 const clerkAppearance = {
-  baseTheme: dark,
   cssLayerName: "clerk",
   variables: {
-    colorPrimary: "#e6b953",
-    colorBackground: "#1a1025",
-    colorInput: "#261a35",
-    colorInputForeground: "#faebd7",
-    colorForeground: "#faebd7",
-    colorText: "#faebd7",
-    fontFamily: "'Playfair Display', serif",
+    colorPrimary: "#E8711A",
+    colorBackground: "#FFFFFF",
+    colorInput: "#F9F9F7",
+    colorInputForeground: "#1A1A1A",
+    colorForeground: "#1A1A1A",
+    colorText: "#1A1A1A",
+    fontFamily: "'Inter', system-ui, sans-serif",
     borderRadius: "0.75rem",
   },
   elements: {
     cardBox: "w-[440px] max-w-full overflow-hidden bg-card border border-border shadow-xl rounded-2xl",
     card: "bg-transparent border-0 shadow-none",
-    headerTitle: "text-foreground font-serif text-2xl",
+    headerTitle: "text-foreground font-sans font-bold text-2xl",
     headerSubtitle: "text-muted-foreground",
-    formFieldLabel: "text-foreground",
+    formFieldLabel: "text-foreground font-medium",
     formFieldInput: "bg-input border-border text-foreground rounded-md",
-    formButtonPrimary: "bg-primary text-primary-foreground hover:bg-primary/90 font-medium",
+    formButtonPrimary: "bg-accent text-accent-foreground hover:bg-accent/90 font-semibold rounded-full",
     footerActionText: "text-muted-foreground",
-    footerActionLink: "text-primary hover:text-primary/80",
+    footerActionLink: "text-primary font-medium hover:text-primary/80",
     dividerLine: "bg-border",
     dividerText: "text-muted-foreground",
   }
@@ -64,8 +63,7 @@ const clerkAppearance = {
 
 function SignInPage() {
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background to-background pointer-events-none" />
+    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4">
       <div className="relative z-10">
         <SignIn routing="path" path={`${basePath}/sign-in`} signUpUrl={`${basePath}/sign-up`} />
       </div>
@@ -75,8 +73,7 @@ function SignInPage() {
 
 function SignUpPage() {
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary/10 via-background to-background pointer-events-none" />
+    <div className="flex min-h-[100dvh] items-center justify-center bg-background px-4">
       <div className="relative z-10">
         <SignUp routing="path" path={`${basePath}/sign-up`} signInUrl={`${basePath}/sign-in`} />
       </div>

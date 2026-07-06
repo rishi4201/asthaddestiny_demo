@@ -96,8 +96,8 @@ export default function Questionnaire() {
     return (
       <Layout>
         <div className="container mx-auto p-4 pt-8 max-w-2xl">
-          <Skeleton className="h-8 w-full mb-4 bg-card" />
-          <Skeleton className="h-64 w-full bg-card" />
+          <Skeleton className="h-8 w-full mb-4 bg-muted" />
+          <Skeleton className="h-64 w-full bg-muted" />
         </div>
       </Layout>
     );
@@ -110,21 +110,21 @@ export default function Questionnaire() {
     <Layout>
       <div className="container mx-auto p-4 pt-8 pb-24 max-w-2xl">
         <div className="mb-8">
-          <h1 className="text-3xl font-serif text-center mb-6">The Unveiling</h1>
-          <Progress value={progress} className="h-2 bg-card" />
-          <p className="text-center text-xs text-muted-foreground mt-2 font-mono">STEP {currentStep} OF 5</p>
+          <h1 className="text-3xl font-sans font-bold text-center mb-6 text-foreground">Your Birth Chart Profile</h1>
+          <Progress value={progress} className="h-2 bg-muted [&>div]:bg-primary" />
+          <p className="text-center text-xs text-muted-foreground mt-2 font-medium">STEP {currentStep} OF 5</p>
         </div>
 
-        <Card className="bg-card/80 backdrop-blur-md border-primary/20 shadow-xl">
-          <CardHeader>
-            <CardTitle className="font-serif text-2xl text-primary">
+        <Card className="bg-card border-border shadow-md rounded-2xl overflow-hidden">
+          <CardHeader className="bg-muted/30 border-b border-border pb-6">
+            <CardTitle className="font-sans font-bold text-2xl text-foreground">
               {currentStep === 1 && "Your Arrival"}
               {currentStep === 2 && "The Exact Moment"}
               {currentStep === 3 && "The Location"}
               {currentStep === 4 && "Your Path (Part 1)"}
               {currentStep === 5 && "Your Path (Part 2)"}
             </CardTitle>
-            <CardDescription className="text-base text-foreground/80">
+            <CardDescription className="text-base text-muted-foreground">
               {currentStep === 1 && "When did you enter this realm?"}
               {currentStep === 2 && "The alignment of the stars depends on precise timing."}
               {currentStep === 3 && "Where on Earth did you take your first breath?"}
@@ -132,16 +132,16 @@ export default function Questionnaire() {
               {currentStep === 5 && "Final reflections to guide our reading."}
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-6 pt-6">
             
             {currentStep === 1 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="birthDate">Date of Birth</Label>
+                  <Label htmlFor="birthDate" className="font-semibold text-foreground">Date of Birth</Label>
                   <Input 
                     id="birthDate" 
                     type="date" 
-                    className="bg-background"
+                    className="bg-background border-border shadow-sm h-12"
                     value={formData.birthDate}
                     onChange={(e) => setFormData({...formData, birthDate: e.target.value})}
                   />
@@ -152,11 +152,11 @@ export default function Questionnaire() {
             {currentStep === 2 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="birthTime">Time of Birth (if known)</Label>
+                  <Label htmlFor="birthTime" className="font-semibold text-foreground">Time of Birth (if known)</Label>
                   <Input 
                     id="birthTime" 
                     type="time" 
-                    className="bg-background"
+                    className="bg-background border-border shadow-sm h-12"
                     value={formData.birthTime}
                     onChange={(e) => setFormData({...formData, birthTime: e.target.value})}
                   />
@@ -168,12 +168,12 @@ export default function Questionnaire() {
             {currentStep === 3 && (
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="birthCity">City of Birth</Label>
+                  <Label htmlFor="birthCity" className="font-semibold text-foreground">City of Birth</Label>
                   <Input 
                     id="birthCity" 
                     type="text" 
                     placeholder="e.g., Paris, France"
-                    className="bg-background"
+                    className="bg-background border-border shadow-sm h-12"
                     value={formData.birthCity}
                     onChange={(e) => setFormData({...formData, birthCity: e.target.value})}
                   />
@@ -184,31 +184,31 @@ export default function Questionnaire() {
             {currentStep === 4 && (
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="question1">What is your primary focus or challenge right now?</Label>
+                  <Label htmlFor="question1" className="font-semibold text-foreground">What is your primary focus or challenge right now?</Label>
                   <Textarea 
                     id="question1" 
                     rows={3}
-                    className="bg-background resize-none"
+                    className="bg-background border-border shadow-sm resize-none"
                     value={formData.question1}
                     onChange={(e) => setFormData({...formData, question1: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="question2">What do you seek from this reading?</Label>
+                  <Label htmlFor="question2" className="font-semibold text-foreground">What do you seek from this reading?</Label>
                   <Textarea 
                     id="question2" 
                     rows={3}
-                    className="bg-background resize-none"
+                    className="bg-background border-border shadow-sm resize-none"
                     value={formData.question2}
                     onChange={(e) => setFormData({...formData, question2: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="question3">Are there any repeating patterns in your life?</Label>
+                  <Label htmlFor="question3" className="font-semibold text-foreground">Are there any repeating patterns in your life?</Label>
                   <Textarea 
                     id="question3" 
                     rows={3}
-                    className="bg-background resize-none"
+                    className="bg-background border-border shadow-sm resize-none"
                     value={formData.question3}
                     onChange={(e) => setFormData({...formData, question3: e.target.value})}
                   />
@@ -219,21 +219,21 @@ export default function Questionnaire() {
             {currentStep === 5 && (
               <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="question4">How do you usually process emotions?</Label>
+                  <Label htmlFor="question4" className="font-semibold text-foreground">How do you usually process emotions?</Label>
                   <Textarea 
                     id="question4" 
                     rows={3}
-                    className="bg-background resize-none"
+                    className="bg-background border-border shadow-sm resize-none"
                     value={formData.question4}
                     onChange={(e) => setFormData({...formData, question4: e.target.value})}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="question5">Is there anything else the seer should know?</Label>
+                  <Label htmlFor="question5" className="font-semibold text-foreground">Is there anything else the seer should know?</Label>
                   <Textarea 
                     id="question5" 
                     rows={3}
-                    className="bg-background resize-none"
+                    className="bg-background border-border shadow-sm resize-none"
                     value={formData.question5}
                     onChange={(e) => setFormData({...formData, question5: e.target.value})}
                   />
@@ -242,24 +242,25 @@ export default function Questionnaire() {
             )}
 
           </CardContent>
-          <CardFooter className="flex justify-between border-t border-border/50 pt-6">
+          <CardFooter className="flex justify-between border-t border-border pt-6 bg-muted/10">
             <Button 
-              variant="ghost" 
+              variant="outline" 
               onClick={handlePrev} 
               disabled={currentStep === 1 || isSaving}
+              className="rounded-full px-6 font-semibold"
             >
               <ArrowLeft className="w-4 h-4 mr-2" /> Back
             </Button>
             
             {currentStep < 5 ? (
-              <Button onClick={handleNext} disabled={isSaving}>
+              <Button onClick={handleNext} disabled={isSaving} className="rounded-full px-8 bg-accent text-accent-foreground font-semibold hover:bg-accent/90">
                 {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
                 Next <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             ) : (
-              <Button onClick={handleSubmit} disabled={isSaving} className="bg-primary text-primary-foreground">
+              <Button onClick={handleSubmit} disabled={isSaving} className="rounded-full px-8 bg-primary text-primary-foreground font-semibold hover:bg-primary/90">
                 {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
-                Submit to the Stars
+                Submit Profile
               </Button>
             )}
           </CardFooter>
